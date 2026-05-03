@@ -163,6 +163,20 @@ Sanity-driven pages (`/`, `/[...slug]`, `/blog`, `/blog/[slug]`, `/contact`) zij
 
 `/404` blijft statisch.
 
+## Sitemap
+
+`/sitemap.xml` is een server-route die Sanity-content (homepage, pagina's, posts, contactpagina) en legal-pagina's samenvoegt. `lastmod` komt uit Sanity's `_updatedAt` voor CMS-content en de `updatedAt`-frontmatter voor markdown. Pagina's met `seo.noIndex = true` worden uitgesloten.
+
+## Juridische pagina's (templates)
+
+In `apps/web/src/content/legal/` staan markdown-templates voor:
+
+- `privacybeleid.md` → `/privacybeleid`
+- `cookiebeleid.md` → `/cookiebeleid`
+- `algemene-voorwaarden.md` → `/algemene-voorwaarden`
+
+Deze worden gerenderd via `[...slug].astro` (Sanity-page eerst, fallback naar legal collection). Frontmatter-schema in `src/content.config.ts`. **Pas elke template aan op de klant vóór livegang** — algemene voorwaarden in het bijzonder horen juridisch getoetst te zijn.
+
 ## Wat zit er nog niet in (volgende iteraties)
 
 - Privacy/cookies/AV templates

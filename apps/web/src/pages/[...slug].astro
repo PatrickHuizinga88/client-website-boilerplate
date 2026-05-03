@@ -1,4 +1,5 @@
 ---
+import { getEntry, render } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import BlockRenderer from '@/components/blocks/BlockRenderer.astro';
 import { getClient } from '@/lib/sanity/client';
@@ -10,13 +11,46 @@ export const prerender = false;
 
 const { slug } = Astro.params;
 const preview = isPreview(Astro.cookies);
+
+// 1. Sanity page (CMS-driven content first)
 const page = await getClient(preview).fetch<Page | null>(pageBySlugQuery, { slug });
 
-if (!page) {
+// 2. Legal markdown collection (single-segment slugs only)
+let LegalContent: Awaited<ReturnType<typeof render>>['Content'] | null = null;
+let legalMeta: { title: string; updatedAt?: string } | null = null;
+
+if (!page && slug && !slug.includes('/')) {
+  const entry = await getEntry('legal', slug);
+  if (entry) {
+    const rendered = await render(entry);
+    LegalContent = rendered.Content;
+    legalMeta = { title: entry.data.title, updatedAt: entry.data.updatedAt };
+  }
+}
+
+if (!page && !LegalContent) {
   return new Response(null, { status: 404 });
 }
 ---
 
-<BaseLayout title={page.title} seo={page.seo}>
-  <BlockRenderer blocks={page.blocks} />
-</BaseLayout>
+{
+  page ? (
+    <BaseLayout title={page.title} seo={page.seo}>
+      <BlockRenderer blocks={page.blocks} />
+    </BaseLayout>
+  ) : (
+    <BaseLayout title={legalMeta!.title}>
+      <article class="container-page py-16">
+        <div class="mx-auto max-w-prose">
+          <h1 class="text-4xl font-bold tracking-tight text-slate-900">{legalMeta!.title}</h1>
+          {legalMeta!.updatedAt && (
+            <p class="mt-2 text-sm text-slate-500">Laatst bijgewerkt: {legalMeta!.updatedAt}</p>
+          )}
+          <div class="mt-8 space-y-4 text-slate-700 [&_a]:text-brand-accent [&_a]:underline [&_h2]:mt-10 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:text-slate-900 [&_h3]:mt-6 [&_h3]:font-semibold [&_h3]:text-slate-900 [&_table]:w-full [&_table]:text-left [&_th]:border-b [&_th]:py-2 [&_td]:border-b [&_td]:py-2 [&_blockquote]:border-l-4 [&_blockquote]:border-slate-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6">
+            {LegalContent && <LegalContent />}
+          </div>
+        </div>
+      </article>
+    </BaseLayout>
+  )
+}

@@ -1,7 +1,6 @@
 import { defineConfig } from 'astro/config';
 import node from '@astrojs/node';
 import tailwind from '@astrojs/tailwind';
-import sitemap from '@astrojs/sitemap';
 import react from '@astrojs/react';
 import sanity from '@sanity/astro';
 
@@ -29,9 +28,6 @@ export default defineConfig({
       stega: { studioUrl: '/studio' },
     }),
     tailwind({ applyBaseStyles: true }),
-    sitemap({
-      filter: (page) => !page.includes('/studio') && !page.includes('/api/'),
-    }),
     react(),
   ],
 

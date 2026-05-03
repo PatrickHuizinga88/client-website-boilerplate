@@ -155,3 +155,18 @@ export const contactPageQuery = groq`
     ${seoProjection}
   }
 `;
+
+export const sitemapEntriesQuery = groq`
+  {
+    "pages": *[_type == "page" && defined(slug.current) && !(seo.noIndex == true)]{
+      "slug": slug.current,
+      _updatedAt
+    },
+    "posts": *[_type == "post" && defined(slug.current) && !(seo.noIndex == true)]{
+      "slug": slug.current,
+      _updatedAt
+    },
+    "homeUpdated": *[_type == "homePage"][0]._updatedAt,
+    "contactUpdated": *[_type == "contactPage"][0]._updatedAt
+  }
+`;
