@@ -163,6 +163,23 @@ Sanity-driven pages (`/`, `/[...slug]`, `/blog`, `/blog/[slug]`, `/contact`) zij
 
 `/404` blijft statisch.
 
+## Analytics (Umami)
+
+Privacy-vriendelijke analytics — geen cookies, geen consent-banner nodig (zie cookiebeleid).
+
+Setup:
+1. Maak een site aan in [cloud.umami.is](https://cloud.umami.is) of host zelf
+2. Vul in `.env`:
+   ```
+   PUBLIC_UMAMI_SCRIPT_URL=https://cloud.umami.is/script.js
+   PUBLIC_UMAMI_WEBSITE_ID=<je-website-id>
+   ```
+3. Bij self-hosting met meerdere domeinen kun je `data-domains` aan het script-tag toevoegen — pas `BaseLayout.astro` aan
+
+Het script wordt **niet** geladen wanneer:
+- Een van beide env vars leeg is
+- De preview-cookie actief is (editors hoeven niet getrackt)
+
 ## Sitemap
 
 `/sitemap.xml` is een server-route die Sanity-content (homepage, pagina's, posts, contactpagina) en legal-pagina's samenvoegt. `lastmod` komt uit Sanity's `_updatedAt` voor CMS-content en de `updatedAt`-frontmatter voor markdown. Pagina's met `seo.noIndex = true` worden uitgesloten.

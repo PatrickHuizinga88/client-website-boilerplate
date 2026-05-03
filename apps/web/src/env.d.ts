@@ -13,6 +13,8 @@ interface ImportMetaEnv {
   readonly PUBLIC_TURNSTILE_SITE_KEY?: string;
   readonly TURNSTILE_SECRET_KEY?: string;
   readonly PUBLIC_SITE_URL?: string;
+  readonly PUBLIC_UMAMI_SCRIPT_URL?: string;
+  readonly PUBLIC_UMAMI_WEBSITE_ID?: string;
 }
 
 interface ImportMeta {
