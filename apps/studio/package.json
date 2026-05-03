@@ -9,7 +9,7 @@
     "deploy": "sanity deploy",
     "start": "sanity start",
     "typegen": "sanity schema extract && sanity typegen generate",
-    "lint": "tsc --noEmit"
+    "lint:types": "tsc --noEmit"
   },
   "dependencies": {
     "@boilerplate/shared": "workspace:*",

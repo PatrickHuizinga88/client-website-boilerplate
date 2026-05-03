@@ -10,7 +10,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "typegen": "sanity schema extract --workspace=default --path=./schema.json && sanity typegen generate",
-    "lint": "astro check"
+    "lint:types": "astro check"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

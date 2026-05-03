@@ -76,8 +76,20 @@ Open http://localhost:4321/studio en maak aan:
 | `pnpm dev:studio` | Alleen Studio |
 | `pnpm build` | Build beide apps |
 | `pnpm typegen` | Genereer typed queries vanuit Sanity schemas |
-| `pnpm lint` | Lint alles |
-| `pnpm format` | Prettier |
+| `pnpm lint` | ESLint + type-check (alle workspaces) |
+| `pnpm lint:eslint` | Alleen ESLint |
+| `pnpm lint:fix` | ESLint met `--fix` |
+| `pnpm lint:types` | Alleen type-check (`astro check` + `tsc`) |
+| `pnpm format` | Prettier write |
+| `pnpm format:check` | Prettier check (CI) |
+
+## Code-kwaliteit
+
+ESLint 9 flat config staat in `eslint.config.js` (root). Plugins: `typescript-eslint`, `eslint-plugin-astro`, met `eslint-config-prettier` om formatting-conflicten uit te zetten.
+
+**Pre-commit hook** (Husky + lint-staged) draait Prettier en ESLint `--fix` op staged bestanden — geactiveerd na `pnpm install` (via het `prepare` script). Configuratie in `.lintstagedrc.json` en `.husky/pre-commit`.
+
+Hook tijdelijk overslaan (alleen bij echte uitzondering): `git commit --no-verify`.
 
 ## Visual editing (preview mode)
 
