@@ -1,0 +1,23 @@
+{
+  "name": "client-website-boilerplate",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Astro + Sanity boilerplate for MKB websites",
+  "scripts": {
+    "dev": "pnpm --parallel --filter \"./apps/*\" dev",
+    "dev:web": "pnpm --filter web dev",
+    "dev:studio": "pnpm --filter studio dev",
+    "build": "pnpm --filter \"./apps/*\" build",
+    "typegen": "pnpm --filter web typegen",
+    "lint": "pnpm --recursive lint",
+    "format": "prettier --write \"**/*.{ts,tsx,astro,md,json}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "prettier-plugin-astro": "^0.14.1"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=20.11.0"
+  }
+}

@@ -1,0 +1,13 @@
+---
+import { toHTML } from '@portabletext/to-html';
+import type { RichTextBlock } from '@/lib/sanity/types';
+
+type Props = { block: RichTextBlock };
+const { block } = Astro.props;
+
+const html = block.content ? toHTML(block.content) : '';
+---
+
+<section class="container-page py-12 md:py-16">
+  <div class="prose prose-slate max-w-prose" set:html={html} />
+</section>

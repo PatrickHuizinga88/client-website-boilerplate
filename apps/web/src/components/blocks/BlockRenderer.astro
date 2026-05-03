@@ -1,0 +1,21 @@
+---
+import Hero from './Hero.astro';
+import RichText from './RichText.astro';
+import type { PageBlock } from '@/lib/sanity/types';
+
+type Props = { blocks?: PageBlock[] };
+const { blocks } = Astro.props;
+---
+
+{
+  blocks?.map((block) => {
+    switch (block._type) {
+      case 'hero':
+        return <Hero block={block} />;
+      case 'richText':
+        return <RichText block={block} />;
+      default:
+        return null;
+    }
+  })
+}

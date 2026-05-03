@@ -1,0 +1,69 @@
+---
+import '@/styles/global.css';
+import Header from '@/components/layout/Header.astro';
+import Footer from '@/components/layout/Footer.astro';
+import VisualEditing from '@/components/VisualEditing.astro';
+import { sanityClient } from '@/lib/sanity/client';
+import { siteSettingsQuery } from '@/lib/sanity/queries';
+import type { Seo, SiteSettings } from '@/lib/sanity/types';
+import { urlFor } from '@/lib/sanity/image';
+
+type Props = {
+  title?: string;
+  description?: string;
+  seo?: Seo;
+  noIndex?: boolean;
+};
+
+const { title, description, seo, noIndex } = Astro.props;
+
+const settings = await sanityClient.fetch<SiteSettings | null>(siteSettingsQuery);
+
+const metaTitle = seo?.title || title || settings?.defaultSeo?.title || settings?.title || 'Site';
+const metaDescription =
+  seo?.description ||
+  description ||
+  settings?.defaultSeo?.description ||
+  settings?.description ||
+  '';
+const ogImageSource = seo?.image ?? settings?.defaultSeo?.image;
+const ogImage = ogImageSource?.asset
+  ? urlFor(ogImageSource).width(1200).height(630).fit('crop').url()
+  : undefined;
+
+const siteUrl = import.meta.env.PUBLIC_SITE_URL ?? Astro.site?.toString() ?? '';
+const canonical = new URL(Astro.url.pathname, siteUrl || Astro.url.origin).toString();
+const shouldNoIndex = noIndex || seo?.noIndex;
+---
+
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{metaTitle}</title>
+    {metaDescription && <meta name="description" content={metaDescription} />}
+    <link rel="canonical" href={canonical} />
+    {shouldNoIndex && <meta name="robots" content="noindex,nofollow" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={metaTitle} />
+    {metaDescription && <meta property="og:description" content={metaDescription} />}
+    <meta property="og:url" content={canonical} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+
+    <meta name="twitter:card" content="summary_large_image" />
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <a href="#main" class="skip-link">Naar de inhoud</a>
+    <Header settings={settings} />
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+    <Footer settings={settings} />
+    <VisualEditing />
+  </body>
+</html>

@@ -1,0 +1,21 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import BlockRenderer from '@/components/blocks/BlockRenderer.astro';
+import { getClient } from '@/lib/sanity/client';
+import { homePageQuery } from '@/lib/sanity/queries';
+import { isPreview } from '@/lib/preview';
+import type { HomePage } from '@/lib/sanity/types';
+
+const preview = isPreview(Astro.cookies);
+const home = await getClient(preview).fetch<HomePage | null>(homePageQuery);
+
+if (!home) {
+  return new Response('Homepage not found. Maak een Homepage document aan in /studio.', {
+    status: 404,
+  });
+}
+---
+
+<BaseLayout title={home.title} seo={home.seo}>
+  <BlockRenderer blocks={home.blocks} />
+</BaseLayout>

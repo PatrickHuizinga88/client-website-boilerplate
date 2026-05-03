@@ -1,0 +1,46 @@
+---
+import { urlFor } from '@/lib/sanity/image';
+import type { ImageRef } from '@/lib/sanity/types';
+
+type Props = {
+  image: ImageRef;
+  alt?: string;
+  width?: number;
+  height?: number;
+  sizes?: string;
+  loading?: 'eager' | 'lazy';
+  class?: string;
+};
+
+const {
+  image,
+  alt,
+  width = 1600,
+  height,
+  sizes = '(min-width: 1024px) 1024px, 100vw',
+  loading = 'lazy',
+  class: className,
+} = Astro.props;
+
+const altText = alt ?? image.alt ?? '';
+
+const widths = [400, 800, 1200, 1600, 2000];
+const srcset = widths
+  .map((w) => `${urlFor(image).width(w).auto('format').quality(80).url()} ${w}w`)
+  .join(', ');
+const src = urlFor(image).width(width).auto('format').quality(80).url();
+const lqip = image.asset?.metadata?.lqip;
+---
+
+<img
+  src={src}
+  srcset={srcset}
+  sizes={sizes}
+  alt={altText}
+  width={width}
+  height={height}
+  loading={loading}
+  decoding="async"
+  style={lqip ? `background-image:url(${lqip});background-size:cover;` : undefined}
+  class:list={[className]}
+/>

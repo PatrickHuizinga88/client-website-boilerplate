@@ -1,0 +1,38 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getClient } from '@/lib/sanity/client';
+import { allPostsQuery } from '@/lib/sanity/queries';
+import { isPreview } from '@/lib/preview';
+import type { Post } from '@/lib/sanity/types';
+
+const preview = isPreview(Astro.cookies);
+const posts = await getClient(preview).fetch<Post[]>(allPostsQuery);
+---
+
+<BaseLayout title="Blog" description="Recente artikelen">
+  <section class="container-page py-16">
+    <h1 class="text-4xl font-bold tracking-tight">Blog</h1>
+    <ul class="mt-10 grid gap-8 md:grid-cols-2">
+      {posts.map((post) => (
+        <li class="rounded-2xl border border-slate-200 p-6">
+          <a href={`/blog/${post.slug}`} class="block">
+            <h2 class="text-xl font-semibold text-slate-900 hover:text-brand-accent">
+              {post.title}
+            </h2>
+            {post.publishedAt && (
+              <p class="mt-1 text-sm text-slate-500">
+                {new Date(post.publishedAt).toLocaleDateString('nl-NL', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </p>
+            )}
+            {post.excerpt && <p class="mt-3 text-slate-700">{post.excerpt}</p>}
+          </a>
+        </li>
+      ))}
+      {posts.length === 0 && <li class="text-slate-500">Nog geen artikelen.</li>}
+    </ul>
+  </section>
+</BaseLayout>

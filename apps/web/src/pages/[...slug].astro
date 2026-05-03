@@ -1,0 +1,25 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import BlockRenderer from '@/components/blocks/BlockRenderer.astro';
+import { getClient, sanityClient } from '@/lib/sanity/client';
+import { allPageSlugsQuery, pageBySlugQuery } from '@/lib/sanity/queries';
+import { isPreview } from '@/lib/preview';
+import type { Page } from '@/lib/sanity/types';
+
+export async function getStaticPaths() {
+  const slugs = await sanityClient.fetch<string[]>(allPageSlugsQuery);
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const preview = isPreview(Astro.cookies);
+const page = await getClient(preview).fetch<Page | null>(pageBySlugQuery, { slug });
+
+if (!page) {
+  return new Response(null, { status: 404 });
+}
+---
+
+<BaseLayout title={page.title} seo={page.seo}>
+  <BlockRenderer blocks={page.blocks} />
+</BaseLayout>

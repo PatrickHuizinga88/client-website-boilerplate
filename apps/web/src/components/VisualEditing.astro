@@ -1,0 +1,15 @@
+---
+// Conditioneel laden — alleen in preview-mode.
+import { isPreview } from '@/lib/preview';
+const preview = isPreview(Astro.cookies);
+---
+
+{
+  preview && (
+    <script>
+      import('@sanity/visual-editing').then(({ enableVisualEditing }) => {
+        enableVisualEditing();
+      });
+    </script>
+  )
+}
