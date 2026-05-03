@@ -1,5 +1,7 @@
 import { defineConfig } from 'astro/config';
+import node from '@astrojs/node';
 import tailwind from '@astrojs/tailwind';
+import sitemap from '@astrojs/sitemap';
 import react from '@astrojs/react';
 import sanity from '@sanity/astro';
 
@@ -13,6 +15,9 @@ if (!projectId) {
 
 export default defineConfig({
   site: process.env.PUBLIC_SITE_URL ?? 'http://localhost:4321',
+  // Hybrid: pages are static-by-default; API routes opt out via `export const prerender = false`.
+  // Swap adapter (Cloudflare/Vercel) per project — see README.
+  adapter: node({ mode: 'standalone' }),
 
   integrations: [
     sanity({
@@ -24,6 +29,9 @@ export default defineConfig({
       stega: { studioUrl: '/studio' },
     }),
     tailwind({ applyBaseStyles: true }),
+    sitemap({
+      filter: (page) => !page.includes('/studio') && !page.includes('/api/'),
+    }),
     react(),
   ],
 

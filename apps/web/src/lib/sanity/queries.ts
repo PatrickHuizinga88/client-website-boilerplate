@@ -20,7 +20,8 @@ const blocksProjection = groq`
         )
       }
     },
-    _type == "richText" => { content }
+    _type == "richText" => { content },
+    _type == "contactBlock" => { heading, intro }
   }
 `;
 
@@ -96,4 +97,16 @@ export const postBySlugQuery = groq`
 
 export const allPostSlugsQuery = groq`
   *[_type == "post" && defined(slug.current)][].slug.current
+`;
+
+export const contactPageQuery = groq`
+  *[_type == "contactPage"][0]{
+    title,
+    intro,
+    recipientEmail,
+    privacyNotice,
+    successMessage,
+    errorMessage,
+    ${seoProjection}
+  }
 `;

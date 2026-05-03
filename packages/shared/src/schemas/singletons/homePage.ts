@@ -16,7 +16,7 @@ export const homePage = defineType({
       name: 'blocks',
       title: 'Pagina-onderdelen',
       type: 'array',
-      of: [{ type: 'hero' }, { type: 'richText' }],
+      of: [{ type: 'hero' }, { type: 'richText' }, { type: 'contactBlock' }],
     }),
     defineField({
       name: 'seo',

@@ -4,10 +4,11 @@ Astro + Sanity boilerplate voor MKB-websites. Zie `Functioneel Ontwerp` voor de 
 
 ## Stack
 
-- **Astro 5** — static-first frontend met islands
+- **Astro 5** — hybrid output (statisch met SSR voor API routes), Node adapter
 - **Sanity v3** — embedded Studio op `/studio`
 - **Tailwind CSS** — styling met design tokens
 - **TypeScript** — strict mode
+- **Resend** — transactionele e-mail voor contactformulier
 - **pnpm workspaces** — monorepo
 
 ## Structuur
@@ -45,6 +46,7 @@ Vul in:
 - `PUBLIC_SANITY_PROJECT_ID` — uit stap 1
 - `SANITY_STUDIO_PROJECT_ID` — zelfde waarde, in `apps/studio/.env`
 - `SANITY_API_READ_TOKEN` — maak een token met "Viewer + draft" rechten in [sanity.io/manage](https://sanity.io/manage)
+- `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `CONTACT_TO_EMAIL` — voor het contactformulier (zie [resend.com](https://resend.com))
 
 ### 3. Installeren & starten
 
@@ -95,7 +97,22 @@ Deactiveer met:
 /api/preview/disable
 ```
 
+## Contactformulier
+
+- Endpoint: `POST /api/contact`
+- Velden: `name`, `email`, `message` + verborgen honeypot (`website`)
+- Spam-bescherming: honeypot altijd, **Cloudflare Turnstile** als `PUBLIC_TURNSTILE_SITE_KEY` + `TURNSTILE_SECRET_KEY` zijn gezet
+- Mail wordt verstuurd via Resend naar `contactPage.recipientEmail` (Sanity) met fallback `CONTACT_TO_EMAIL` (env)
+- Werkt zonder JS (form post + redirect met `?status=success|error`); progressive enhancement via fetch
+
+Aanpassingen aan kopjes/teksten doe je in **Sanity → Contactpagina**.
+
 ## Deploy
+
+### Adapter
+
+De boilerplate gebruikt `@astrojs/node` (standalone) als default — werkt voor elke Node-host.
+Voor Cloudflare Pages / Vercel: vervang `@astrojs/node` door `@astrojs/cloudflare` of `@astrojs/vercel` in `apps/web/astro.config.mjs` en `package.json`.
 
 ### Cloudflare Pages / Vercel
 
@@ -118,15 +135,14 @@ pnpm sanity deploy
 - [x] `pnpm install && pnpm dev` werkt zonder configuratie binnen 2 minuten (na env vars)
 - [ ] Lighthouse 95+ op verse install met demo-content (verifieer per project)
 - [x] Visual editing werkt out-of-the-box
-- [ ] Contactformulier — _nog niet geïmplementeerd in deze scaffold_
+- [x] Contactformulier verstuurt e-mail (Resend + honeypot, optioneel Turnstile)
 - [x] Klant-overdrachtsdocumentatie aanwezig (`HANDOVER.md`)
 
 ## Wat zit er nog niet in (volgende iteraties)
 
-- Contactformulier met Resend + Turnstile (FO §6.3)
 - Extra page-builder blocks: features, testimonials, FAQ, CTA, gallery, logoCloud (FO §4.3)
-- Sitemap-generator (`@astrojs/sitemap`)
 - Privacy/cookies/AV templates
 - Plausible/Umami analytics integration
 - ESLint + Husky + lint-staged config
 - TypeGen output (vereist `pnpm install` + Sanity schema)
+- Rate-limiting op `/api/contact` (host-afhankelijk: Cloudflare Rate Limiting / Upstash)

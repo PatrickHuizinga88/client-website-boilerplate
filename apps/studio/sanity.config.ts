@@ -32,12 +32,12 @@ export default defineConfig({
   schema: {
     types: schemaTypes,
     templates: (templates) =>
-      templates.filter(({ schemaType }) => !['siteSettings', 'homePage'].includes(schemaType)),
+      templates.filter(({ schemaType }) => !['siteSettings', 'homePage', 'contactPage'].includes(schemaType)),
   },
 
   document: {
     actions: (input, { schemaType }) =>
-      ['siteSettings', 'homePage'].includes(schemaType)
+      ['siteSettings', 'homePage', 'contactPage'].includes(schemaType)
         ? input.filter(({ action }) => !['unpublish', 'delete', 'duplicate'].includes(action ?? ''))
         : input,
   },

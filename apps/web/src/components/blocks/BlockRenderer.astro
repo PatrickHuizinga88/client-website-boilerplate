@@ -1,6 +1,7 @@
 ---
 import Hero from './Hero.astro';
 import RichText from './RichText.astro';
+import ContactBlock from './ContactBlock.astro';
 import type { PageBlock } from '@/lib/sanity/types';
 
 type Props = { blocks?: PageBlock[] };
@@ -14,6 +15,8 @@ const { blocks } = Astro.props;
         return <Hero block={block} />;
       case 'richText':
         return <RichText block={block} />;
+      case 'contactBlock':
+        return <ContactBlock block={block} />;
       default:
         return null;
     }

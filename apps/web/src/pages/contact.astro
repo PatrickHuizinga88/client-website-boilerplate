@@ -1,0 +1,30 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ContactForm from '@/components/forms/ContactForm.astro';
+import { getClient } from '@/lib/sanity/client';
+import { contactPageQuery } from '@/lib/sanity/queries';
+import { isPreview } from '@/lib/preview';
+import type { ContactPage } from '@/lib/sanity/types';
+
+const preview = isPreview(Astro.cookies);
+const contactPage = await getClient(preview).fetch<ContactPage | null>(contactPageQuery);
+const title = contactPage?.title ?? 'Contact';
+---
+
+<BaseLayout title={title} description={contactPage?.intro} seo={contactPage?.seo}>
+  <section class="container-page py-16 md:py-24">
+    <div class="mx-auto max-w-2xl">
+      <h1 class="text-4xl font-bold tracking-tight text-slate-900">{title}</h1>
+      {contactPage?.intro && (
+        <p class="mt-4 text-lg text-slate-600">{contactPage.intro}</p>
+      )}
+      <div class="mt-10">
+        <ContactForm
+          successMessage={contactPage?.successMessage}
+          errorMessage={contactPage?.errorMessage}
+          privacyNotice={contactPage?.privacyNotice}
+        />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

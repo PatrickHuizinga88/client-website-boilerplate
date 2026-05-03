@@ -37,7 +37,14 @@ export type RichTextBlock = {
   content?: PortableTextBlock[];
 };
 
-export type PageBlock = HeroBlock | RichTextBlock;
+export type ContactBlock = {
+  _type: 'contactBlock';
+  _key: string;
+  heading?: string;
+  intro?: string;
+};
+
+export type PageBlock = HeroBlock | RichTextBlock | ContactBlock;
 
 export type Seo = {
   title?: string;
@@ -84,5 +91,15 @@ export type Post = {
   coverImage?: ImageRef;
   body?: PortableTextBlock[];
   author?: Author;
+  seo?: Seo;
+};
+
+export type ContactPage = {
+  title: string;
+  intro?: string;
+  recipientEmail?: string;
+  privacyNotice?: string;
+  successMessage?: string;
+  errorMessage?: string;
   seo?: Seo;
 };

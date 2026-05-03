@@ -1,0 +1,150 @@
+---
+type Props = {
+  successMessage?: string;
+  errorMessage?: string;
+  privacyNotice?: string;
+};
+
+const {
+  successMessage = 'Bedankt! We nemen zo snel mogelijk contact op.',
+  errorMessage = 'Er ging iets mis. Probeer het opnieuw.',
+  privacyNotice,
+} = Astro.props;
+
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+---
+
+<div data-contact-form-root>
+  <div
+    role="status"
+    data-contact-status="success"
+    hidden
+    class="mb-5 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800"
+  >
+    {successMessage}
+  </div>
+  <div
+    role="alert"
+    data-contact-status="error"
+    hidden
+    class="mb-5 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+  >
+    {errorMessage}
+  </div>
+
+  <form
+    method="POST"
+    action="/api/contact"
+    class="space-y-5"
+    data-contact-form
+    novalidate
+    aria-describedby={privacyNotice ? 'privacy-notice' : undefined}
+  >
+    <div>
+      <label for="name" class="mb-1 block text-sm font-medium text-slate-900">Naam</label>
+      <input
+        type="text"
+        id="name"
+        name="name"
+        required
+        autocomplete="name"
+        class="w-full rounded-md border border-slate-300 px-3 py-2 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent"
+      />
+    </div>
+
+    <div>
+      <label for="email" class="mb-1 block text-sm font-medium text-slate-900">E-mailadres</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        required
+        autocomplete="email"
+        class="w-full rounded-md border border-slate-300 px-3 py-2 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent"
+      />
+    </div>
+
+    <div>
+      <label for="message" class="mb-1 block text-sm font-medium text-slate-900">Bericht</label>
+      <textarea
+        id="message"
+        name="message"
+        required
+        rows="5"
+        class="w-full rounded-md border border-slate-300 px-3 py-2 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent"
+      ></textarea>
+    </div>
+
+    {/* Honeypot — bots vullen dit veld in, mensen niet. */}
+    <div aria-hidden="true" class="hidden">
+      <label for="website">Website</label>
+      <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+    </div>
+
+    {turnstileSiteKey && (
+      <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="light"></div>
+    )}
+
+    <button
+      type="submit"
+      class="inline-flex items-center justify-center rounded-md bg-brand-accent px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
+      data-submit
+    >
+      Verstuur
+    </button>
+
+    {privacyNotice && (
+      <p id="privacy-notice" class="mt-3 text-xs text-slate-500">{privacyNotice}</p>
+    )}
+  </form>
+</div>
+
+{turnstileSiteKey && (
+  <script
+    is:inline
+    src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+    async
+    defer
+  ></script>
+)}
+
+<script>
+  // Toon status-bericht na redirect met ?status=success|error.
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get('status');
+  if (status === 'success' || status === 'error') {
+    document
+      .querySelectorAll<HTMLElement>(`[data-contact-status="${status}"]`)
+      .forEach((el) => (el.hidden = false));
+    if (status === 'success') {
+      document
+        .querySelectorAll<HTMLFormElement>('form[data-contact-form]')
+        .forEach((form) => form.reset());
+    }
+  }
+
+  // Progressive enhancement: stuur via fetch, redirect met juiste status.
+  document.querySelectorAll<HTMLFormElement>('form[data-contact-form]').forEach((form) => {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const submit = form.querySelector<HTMLButtonElement>('[data-submit]');
+      if (submit) submit.disabled = true;
+
+      const data = new FormData(form);
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: data,
+          headers: { Accept: 'application/json' },
+        });
+        const url = new URL(window.location.href);
+        url.searchParams.set('status', res.ok ? 'success' : 'error');
+        window.location.assign(url.toString());
+      } catch {
+        const url = new URL(window.location.href);
+        url.searchParams.set('status', 'error');
+        window.location.assign(url.toString());
+      }
+    });
+  });
+</script>
