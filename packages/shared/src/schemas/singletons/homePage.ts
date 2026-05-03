@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity';
+import { pageBuilderBlocks } from '../pageBuilderBlocks';
 
 export const homePage = defineType({
   name: 'homePage',
@@ -16,7 +17,7 @@ export const homePage = defineType({
       name: 'blocks',
       title: 'Pagina-onderdelen',
       type: 'array',
-      of: [{ type: 'hero' }, { type: 'richText' }, { type: 'contactBlock' }],
+      of: pageBuilderBlocks.map((b) => ({ type: b.type })),
     }),
     defineField({
       name: 'seo',

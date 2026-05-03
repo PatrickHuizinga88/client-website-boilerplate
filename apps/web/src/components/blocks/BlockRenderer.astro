@@ -2,6 +2,13 @@
 import Hero from './Hero.astro';
 import RichText from './RichText.astro';
 import ContactBlock from './ContactBlock.astro';
+import Cta from './Cta.astro';
+import Features from './Features.astro';
+import Testimonials from './Testimonials.astro';
+import Faq from './Faq.astro';
+import TextImage from './TextImage.astro';
+import LogoCloud from './LogoCloud.astro';
+import Gallery from './Gallery.astro';
 import type { PageBlock } from '@/lib/sanity/types';
 
 type Props = { blocks?: PageBlock[] };
@@ -17,6 +24,20 @@ const { blocks } = Astro.props;
         return <RichText block={block} />;
       case 'contactBlock':
         return <ContactBlock block={block} />;
+      case 'cta':
+        return <Cta block={block} />;
+      case 'features':
+        return <Features block={block} />;
+      case 'testimonials':
+        return <Testimonials block={block} />;
+      case 'faq':
+        return <Faq block={block} />;
+      case 'textImage':
+        return <TextImage block={block} />;
+      case 'logoCloud':
+        return <LogoCloud block={block} />;
+      case 'gallery':
+        return <Gallery block={block} />;
       default:
         return null;
     }

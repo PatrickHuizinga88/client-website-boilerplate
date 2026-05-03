@@ -1,0 +1,33 @@
+---
+import SanityImage from '@/components/ui/SanityImage.astro';
+import type { TestimonialsBlock } from '@/lib/sanity/types';
+
+type Props = { block: TestimonialsBlock };
+const { block } = Astro.props;
+---
+
+<section class="container-page py-12 md:py-16">
+  {block.heading && (
+    <h2 class="mb-10 text-3xl font-bold tracking-tight text-slate-900">{block.heading}</h2>
+  )}
+  <ul class="grid gap-8 md:grid-cols-2">
+    {block.items?.map((item) => (
+      <li class="rounded-2xl border border-slate-200 p-6">
+        <blockquote class="text-slate-700">
+          <p>"{item.quote}"</p>
+        </blockquote>
+        <figcaption class="mt-4 flex items-center gap-3">
+          {item.avatar?.asset && (
+            <div class="h-10 w-10 overflow-hidden rounded-full">
+              <SanityImage image={item.avatar} width={80} height={80} sizes="40px" />
+            </div>
+          )}
+          <div>
+            <p class="font-medium text-slate-900">{item.authorName}</p>
+            {item.authorRole && <p class="text-sm text-slate-500">{item.authorRole}</p>}
+          </div>
+        </figcaption>
+      </li>
+    ))}
+  </ul>
+</section>

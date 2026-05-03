@@ -1,0 +1,31 @@
+---
+import SanityImage from '@/components/ui/SanityImage.astro';
+import Button from '@/components/ui/Button.astro';
+import type { TextImageBlock } from '@/lib/sanity/types';
+
+type Props = { block: TextImageBlock };
+const { block } = Astro.props;
+
+const imageOnLeft = block.imagePosition === 'left';
+---
+
+<section class="container-page py-12 md:py-16">
+  <div class="grid items-center gap-10 md:grid-cols-2">
+    <div class={imageOnLeft ? 'md:order-2' : ''}>
+      <h2 class="text-3xl font-bold tracking-tight text-slate-900">{block.title}</h2>
+      {block.body && <p class="mt-4 max-w-prose whitespace-pre-line text-slate-600">{block.body}</p>}
+      {block.cta?.href && (
+        <div class="mt-6">
+          <Button href={block.cta.href} external={block.cta.type === 'external'}>
+            {block.cta.label}
+          </Button>
+        </div>
+      )}
+    </div>
+    {block.image?.asset && (
+      <div class={['overflow-hidden rounded-2xl', imageOnLeft ? 'md:order-1' : ''].join(' ')}>
+        <SanityImage image={block.image} sizes="(min-width: 768px) 50vw, 100vw" />
+      </div>
+    )}
+  </div>
+</section>

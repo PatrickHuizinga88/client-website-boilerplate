@@ -6,6 +6,8 @@ import { homePageQuery } from '@/lib/sanity/queries';
 import { isPreview } from '@/lib/preview';
 import type { HomePage } from '@/lib/sanity/types';
 
+export const prerender = false;
+
 const preview = isPreview(Astro.cookies);
 const home = await getClient(preview).fetch<HomePage | null>(homePageQuery);
 

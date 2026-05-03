@@ -6,6 +6,8 @@ import { contactPageQuery } from '@/lib/sanity/queries';
 import { isPreview } from '@/lib/preview';
 import type { ContactPage } from '@/lib/sanity/types';
 
+export const prerender = false;
+
 const preview = isPreview(Astro.cookies);
 const contactPage = await getClient(preview).fetch<ContactPage | null>(contactPageQuery);
 const title = contactPage?.title ?? 'Contact';

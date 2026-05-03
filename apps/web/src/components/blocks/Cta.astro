@@ -1,0 +1,25 @@
+---
+import Button from '@/components/ui/Button.astro';
+import type { CtaBlock } from '@/lib/sanity/types';
+
+type Props = { block: CtaBlock };
+const { block } = Astro.props;
+---
+
+<section class="container-page py-12 md:py-16">
+  <div class="rounded-2xl bg-slate-900 px-8 py-12 text-center text-white md:px-12 md:py-16">
+    <h2 class="text-3xl font-bold tracking-tight md:text-4xl">{block.heading}</h2>
+    {block.body && <p class="mx-auto mt-4 max-w-prose text-slate-300">{block.body}</p>}
+    {block.buttons && block.buttons.length > 0 && (
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        {block.buttons.map((btn, i) =>
+          btn.href ? (
+            <Button href={btn.href} external={btn.type === 'external'} variant={i === 0 ? 'primary' : 'secondary'}>
+              {btn.label}
+            </Button>
+          ) : null,
+        )}
+      </div>
+    )}
+  </div>
+</section>

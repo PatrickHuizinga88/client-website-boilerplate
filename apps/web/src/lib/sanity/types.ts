@@ -44,7 +44,95 @@ export type ContactBlock = {
   intro?: string;
 };
 
-export type PageBlock = HeroBlock | RichTextBlock | ContactBlock;
+export type CtaBlock = {
+  _type: 'cta';
+  _key: string;
+  heading: string;
+  body?: string;
+  buttons?: Link[];
+};
+
+export type FeatureItem = {
+  icon?: string;
+  title: string;
+  body?: string;
+};
+
+export type FeaturesBlock = {
+  _type: 'features';
+  _key: string;
+  heading?: string;
+  intro?: string;
+  items?: FeatureItem[];
+};
+
+export type TestimonialItem = {
+  quote: string;
+  authorName: string;
+  authorRole?: string;
+  avatar?: ImageRef;
+};
+
+export type TestimonialsBlock = {
+  _type: 'testimonials';
+  _key: string;
+  heading?: string;
+  items?: TestimonialItem[];
+};
+
+export type FaqItem = {
+  question: string;
+  answer: string;
+};
+
+export type FaqBlock = {
+  _type: 'faq';
+  _key: string;
+  heading?: string;
+  items?: FaqItem[];
+};
+
+export type TextImageBlock = {
+  _type: 'textImage';
+  _key: string;
+  title: string;
+  body?: string;
+  image?: ImageRef;
+  imagePosition?: 'left' | 'right';
+  cta?: Link;
+};
+
+export type LogoItem = {
+  image?: ImageRef;
+  url?: string;
+};
+
+export type LogoCloudBlock = {
+  _type: 'logoCloud';
+  _key: string;
+  heading?: string;
+  logos?: LogoItem[];
+};
+
+export type GalleryBlock = {
+  _type: 'gallery';
+  _key: string;
+  heading?: string;
+  columns?: number;
+  images?: ImageRef[];
+};
+
+export type PageBlock =
+  | HeroBlock
+  | RichTextBlock
+  | ContactBlock
+  | CtaBlock
+  | FeaturesBlock
+  | TestimonialsBlock
+  | FaqBlock
+  | TextImageBlock
+  | LogoCloudBlock
+  | GalleryBlock;
 
 export type Seo = {
   title?: string;

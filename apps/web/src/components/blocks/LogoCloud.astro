@@ -1,0 +1,32 @@
+---
+import SanityImage from '@/components/ui/SanityImage.astro';
+import type { LogoCloudBlock } from '@/lib/sanity/types';
+
+type Props = { block: LogoCloudBlock };
+const { block } = Astro.props;
+---
+
+<section class="container-page py-12 md:py-16">
+  {block.heading && (
+    <p class="mb-8 text-center text-sm font-medium uppercase tracking-wider text-slate-500">
+      {block.heading}
+    </p>
+  )}
+  <ul class="flex flex-wrap items-center justify-center gap-x-12 gap-y-8">
+    {block.logos?.map((logo) => (
+      <li class="flex items-center">
+        {logo.url ? (
+          <a href={logo.url} target="_blank" rel="noopener noreferrer" class="block opacity-70 transition-opacity hover:opacity-100">
+            {logo.image?.asset && (
+              <SanityImage image={logo.image} width={160} height={60} sizes="160px" class="h-10 w-auto object-contain" />
+            )}
+          </a>
+        ) : (
+          logo.image?.asset && (
+            <SanityImage image={logo.image} width={160} height={60} sizes="160px" class="h-10 w-auto object-contain opacity-70" />
+          )
+        )}
+      </li>
+    ))}
+  </ul>
+</section>

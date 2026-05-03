@@ -2,15 +2,12 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import SanityImage from '@/components/ui/SanityImage.astro';
 import { toHTML } from '@portabletext/to-html';
-import { getClient, sanityClient } from '@/lib/sanity/client';
-import { allPostSlugsQuery, postBySlugQuery } from '@/lib/sanity/queries';
+import { getClient } from '@/lib/sanity/client';
+import { postBySlugQuery } from '@/lib/sanity/queries';
 import { isPreview } from '@/lib/preview';
 import type { Post } from '@/lib/sanity/types';
 
-export async function getStaticPaths() {
-  const slugs = await sanityClient.fetch<string[]>(allPostSlugsQuery);
-  return slugs.map((slug) => ({ params: { slug } }));
-}
+export const prerender = false;
 
 const { slug } = Astro.params;
 const preview = isPreview(Astro.cookies);
@@ -42,6 +39,6 @@ const formattedDate = post.publishedAt
         <SanityImage image={post.coverImage} loading="eager" />
       </div>
     )}
-    <div class="prose prose-slate max-w-prose" set:html={bodyHtml} />
+    <div class="max-w-prose" set:html={bodyHtml} />
   </article>
 </BaseLayout>

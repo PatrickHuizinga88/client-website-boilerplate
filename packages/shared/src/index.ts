@@ -1,2 +1,2 @@
-export { schemaTypes } from './schemas';
+export { schemaTypes, pageBuilderBlocks } from './schemas';
 export { structure } from './structure';

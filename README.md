@@ -138,11 +138,36 @@ pnpm sanity deploy
 - [x] Contactformulier verstuurt e-mail (Resend + honeypot, optioneel Turnstile)
 - [x] Klant-overdrachtsdocumentatie aanwezig (`HANDOVER.md`)
 
+## Page-builder blocks
+
+Beschikbaar in de homepage en alle pagina's (zie `packages/shared/src/schemas/pageBuilderBlocks.ts` om aan/uit te zetten):
+
+| Block | Doel |
+| --- | --- |
+| `hero` | Hero met titel, subtitle, beeld en CTA |
+| `textImage` | Tekst naast afbeelding (links/rechts) |
+| `features` | Grid van features/USPs met emoji-icoon |
+| `testimonials` | Klantverhalen met avatar |
+| `faq` | Accordion via native `<details>`/`<summary>` |
+| `cta` | Call-to-action banner met max. 2 knoppen |
+| `logoCloud` | Klantlogo's, optioneel klikbaar |
+| `gallery` | Afbeeldingen-grid (2/3/4 kolommen) |
+| `richText` | Vrije tekst (Portable Text) |
+| `contactBlock` | Embedded contactformulier |
+
+Styling is bewust minimaal — design tokens in `apps/web/tailwind.config.mjs`, blocks in `apps/web/src/components/blocks/`.
+
+## Rendering & preview-mode
+
+Sanity-driven pages (`/`, `/[...slug]`, `/blog`, `/blog/[slug]`, `/contact`) zijn **server-rendered** zodat preview-cookies effect hebben en drafts direct getoond worden. Sanity's CDN levert de data binnen ~50ms — voor sites > ~500 pagina's overweeg on-demand revalidation.
+
+`/404` blijft statisch.
+
 ## Wat zit er nog niet in (volgende iteraties)
 
-- Extra page-builder blocks: features, testimonials, FAQ, CTA, gallery, logoCloud (FO §4.3)
 - Privacy/cookies/AV templates
 - Plausible/Umami analytics integration
 - ESLint + Husky + lint-staged config
 - TypeGen output (vereist `pnpm install` + Sanity schema)
 - Rate-limiting op `/api/contact` (host-afhankelijk: Cloudflare Rate Limiting / Upstash)
+- Cache-Control headers voor SSR pages (host-afhankelijk)

@@ -1,5 +1,17 @@
 import groq from 'groq';
 
+// Resolved href voor link-objects (intern ↔ extern).
+const linkProjection = `
+  label,
+  type,
+  "href": select(
+    type == "external" => external,
+    type == "internal" && internal->_type == "page" => "/" + internal->slug.current,
+    type == "internal" && internal->_type == "post" => "/blog/" + internal->slug.current,
+    null
+  )
+`;
+
 const blocksProjection = groq`
   blocks[]{
     _type,
@@ -9,19 +21,52 @@ const blocksProjection = groq`
       title,
       subtitle,
       image{ ..., asset->, alt },
-      cta{
-        label,
-        type,
-        "href": select(
-          type == "external" => external,
-          type == "internal" && internal->_type == "page" => "/" + internal->slug.current,
-          type == "internal" && internal->_type == "post" => "/blog/" + internal->slug.current,
-          null
-        )
-      }
+      cta{ ${linkProjection} }
     },
     _type == "richText" => { content },
-    _type == "contactBlock" => { heading, intro }
+    _type == "contactBlock" => { heading, intro },
+    _type == "cta" => {
+      heading,
+      body,
+      buttons[]{ ${linkProjection} }
+    },
+    _type == "features" => {
+      heading,
+      intro,
+      items[]{ icon, title, body }
+    },
+    _type == "testimonials" => {
+      heading,
+      items[]{
+        quote,
+        authorName,
+        authorRole,
+        avatar{ ..., asset->, alt }
+      }
+    },
+    _type == "faq" => {
+      heading,
+      items[]{ question, answer }
+    },
+    _type == "textImage" => {
+      title,
+      body,
+      image{ ..., asset->, alt },
+      imagePosition,
+      cta{ ${linkProjection} }
+    },
+    _type == "logoCloud" => {
+      heading,
+      logos[]{
+        image{ ..., asset->, alt },
+        url
+      }
+    },
+    _type == "gallery" => {
+      heading,
+      columns,
+      images[]{ ..., asset->, alt }
+    }
   }
 `;
 

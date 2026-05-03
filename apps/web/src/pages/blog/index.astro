@@ -5,6 +5,8 @@ import { allPostsQuery } from '@/lib/sanity/queries';
 import { isPreview } from '@/lib/preview';
 import type { Post } from '@/lib/sanity/types';
 
+export const prerender = false;
+
 const preview = isPreview(Astro.cookies);
 const posts = await getClient(preview).fetch<Post[]>(allPostsQuery);
 ---

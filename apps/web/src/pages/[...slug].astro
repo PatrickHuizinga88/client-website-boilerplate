@@ -1,15 +1,12 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import BlockRenderer from '@/components/blocks/BlockRenderer.astro';
-import { getClient, sanityClient } from '@/lib/sanity/client';
-import { allPageSlugsQuery, pageBySlugQuery } from '@/lib/sanity/queries';
+import { getClient } from '@/lib/sanity/client';
+import { pageBySlugQuery } from '@/lib/sanity/queries';
 import { isPreview } from '@/lib/preview';
 import type { Page } from '@/lib/sanity/types';
 
-export async function getStaticPaths() {
-  const slugs = await sanityClient.fetch<string[]>(allPageSlugsQuery);
-  return slugs.map((slug) => ({ params: { slug } }));
-}
+export const prerender = false;
 
 const { slug } = Astro.params;
 const preview = isPreview(Astro.cookies);
