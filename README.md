@@ -35,18 +35,27 @@ Noteer de project-ID — die heb je in stap 2 nodig.
 
 ### 2. Env vars
 
-Kopieer `.env.example` naar `.env` (in de root **én** in `apps/studio/`):
+Eén `.env` in de monorepo-root volstaat voor de Astro app (incl. embedded `/studio`):
 
 ```bash
 cp .env.example .env
-cp apps/studio/.env.example apps/studio/.env
 ```
 
 Vul in:
+
 - `PUBLIC_SANITY_PROJECT_ID` — uit stap 1
-- `SANITY_STUDIO_PROJECT_ID` — zelfde waarde, in `apps/studio/.env`
-- `SANITY_API_READ_TOKEN` — maak een token met "Viewer + draft" rechten in [sanity.io/manage](https://sanity.io/manage)
+- `SANITY_API_READ_TOKEN` — token met "Viewer + draft" rechten in [sanity.io/manage](https://sanity.io/manage); nodig voor preview-mode
 - `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `CONTACT_TO_EMAIL` — voor het contactformulier (zie [resend.com](https://resend.com))
+
+> **Sanity CORS** — voeg `http://localhost:4321` toe als allowed origin in `sanity.io/manage` → API → CORS Origins (allow credentials aan), anders krijg je 403's.
+
+Alleen wanneer je óók `apps/studio` standalone wilt draaien:
+
+```bash
+cp apps/studio/.env.example apps/studio/.env
+```
+
+Vul `SANITY_STUDIO_PROJECT_ID` in (zelfde waarde als `PUBLIC_SANITY_PROJECT_ID`).
 
 ### 3. Installeren & starten
 
@@ -56,6 +65,7 @@ pnpm dev
 ```
 
 Dit start parallel:
+
 - Astro op http://localhost:4321
 - Sanity Studio (standalone) op http://localhost:3333
 - Embedded Studio op http://localhost:4321/studio
@@ -63,25 +73,26 @@ Dit start parallel:
 ### 4. Eerste content
 
 Open http://localhost:4321/studio en maak aan:
+
 1. **Site instellingen** — titel, contact, default SEO
 2. **Homepage** — voeg minstens één Hero block toe
 3. (Optioneel) **Pagina's** en **Blog-artikelen**
 
 ## Scripts
 
-| Commando | Beschrijving |
-| --- | --- |
-| `pnpm dev` | Start Astro + Studio parallel |
-| `pnpm dev:web` | Alleen Astro |
-| `pnpm dev:studio` | Alleen Studio |
-| `pnpm build` | Build beide apps |
-| `pnpm typegen` | Genereer typed queries vanuit Sanity schemas |
-| `pnpm lint` | ESLint + type-check (alle workspaces) |
-| `pnpm lint:eslint` | Alleen ESLint |
-| `pnpm lint:fix` | ESLint met `--fix` |
-| `pnpm lint:types` | Alleen type-check (`astro check` + `tsc`) |
-| `pnpm format` | Prettier write |
-| `pnpm format:check` | Prettier check (CI) |
+| Commando            | Beschrijving                                 |
+| ------------------- | -------------------------------------------- |
+| `pnpm dev`          | Start Astro + Studio parallel                |
+| `pnpm dev:web`      | Alleen Astro                                 |
+| `pnpm dev:studio`   | Alleen Studio                                |
+| `pnpm build`        | Build beide apps                             |
+| `pnpm typegen`      | Genereer typed queries vanuit Sanity schemas |
+| `pnpm lint`         | ESLint + type-check (alle workspaces)        |
+| `pnpm lint:eslint`  | Alleen ESLint                                |
+| `pnpm lint:fix`     | ESLint met `--fix`                           |
+| `pnpm lint:types`   | Alleen type-check (`astro check` + `tsc`)    |
+| `pnpm format`       | Prettier write                               |
+| `pnpm format:check` | Prettier check (CI)                          |
 
 ## Code-kwaliteit
 
@@ -154,18 +165,18 @@ pnpm sanity deploy
 
 Beschikbaar in de homepage en alle pagina's (zie `packages/shared/src/schemas/pageBuilderBlocks.ts` om aan/uit te zetten):
 
-| Block | Doel |
-| --- | --- |
-| `hero` | Hero met titel, subtitle, beeld en CTA |
-| `textImage` | Tekst naast afbeelding (links/rechts) |
-| `features` | Grid van features/USPs met emoji-icoon |
-| `testimonials` | Klantverhalen met avatar |
-| `faq` | Accordion via native `<details>`/`<summary>` |
-| `cta` | Call-to-action banner met max. 2 knoppen |
-| `logoCloud` | Klantlogo's, optioneel klikbaar |
-| `gallery` | Afbeeldingen-grid (2/3/4 kolommen) |
-| `richText` | Vrije tekst (Portable Text) |
-| `contactBlock` | Embedded contactformulier |
+| Block          | Doel                                         |
+| -------------- | -------------------------------------------- |
+| `hero`         | Hero met titel, subtitle, beeld en CTA       |
+| `textImage`    | Tekst naast afbeelding (links/rechts)        |
+| `features`     | Grid van features/USPs met emoji-icoon       |
+| `testimonials` | Klantverhalen met avatar                     |
+| `faq`          | Accordion via native `<details>`/`<summary>` |
+| `cta`          | Call-to-action banner met max. 2 knoppen     |
+| `logoCloud`    | Klantlogo's, optioneel klikbaar              |
+| `gallery`      | Afbeeldingen-grid (2/3/4 kolommen)           |
+| `richText`     | Vrije tekst (Portable Text)                  |
+| `contactBlock` | Embedded contactformulier                    |
 
 Styling is bewust minimaal — design tokens in `apps/web/tailwind.config.mjs`, blocks in `apps/web/src/components/blocks/`.
 
@@ -180,6 +191,7 @@ Sanity-driven pages (`/`, `/[...slug]`, `/blog`, `/blog/[slug]`, `/contact`) zij
 Privacy-vriendelijke analytics — geen cookies, geen consent-banner nodig (zie cookiebeleid).
 
 Setup:
+
 1. Maak een site aan in [cloud.umami.is](https://cloud.umami.is) of host zelf
 2. Vul in `.env`:
    ```
@@ -189,6 +201,7 @@ Setup:
 3. Bij self-hosting met meerdere domeinen kun je `data-domains` aan het script-tag toevoegen — pas `BaseLayout.astro` aan
 
 Het script wordt **niet** geladen wanneer:
+
 - Een van beide env vars leeg is
 - De preview-cookie actief is (editors hoeven niet getrackt)
 

@@ -3,11 +3,13 @@ import { structureTool } from 'sanity/structure';
 import { presentationTool } from 'sanity/presentation';
 import { schemaTypes, structure } from '@boilerplate/shared';
 
-const projectId = process.env.PUBLIC_SANITY_PROJECT_ID ?? '';
-const dataset = process.env.PUBLIC_SANITY_DATASET ?? 'development';
+// Deze keys worden door Vite's `define` (in astro.config.mjs) bij build vervangen
+// door de waardes uit PUBLIC_SANITY_PROJECT_ID / PUBLIC_SANITY_DATASET.
+const projectId = process.env.SANITY_STUDIO_PROJECT_ID ?? '';
+const dataset = process.env.SANITY_STUDIO_DATASET ?? 'development';
 
 if (!projectId) {
-  throw new Error('Missing PUBLIC_SANITY_PROJECT_ID env var.');
+  throw new Error('Missing SANITY_STUDIO_PROJECT_ID env var.');
 }
 
 const SINGLETON_TYPES = ['siteSettings', 'homePage', 'contactPage'];
