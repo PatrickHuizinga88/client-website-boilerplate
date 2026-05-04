@@ -1,4 +1,5 @@
 import js from '@eslint/js';
+import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import astroPlugin from 'eslint-plugin-astro';
 import prettier from 'eslint-config-prettier';
@@ -26,6 +27,9 @@ export default [
 
   {
     files: ['**/*.{ts,tsx,astro}'],
+    languageOptions: {
+      globals: { ...globals.browser, ...globals.node },
+    },
     rules: {
       '@typescript-eslint/no-unused-vars': [
         'warn',
@@ -37,10 +41,26 @@ export default [
   },
 
   {
+    // Config-bestanden draaien in Node — process etc. moeten beschikbaar zijn.
+    files: ['**/*.config.{js,mjs,cjs,ts,mts}', '**/eslint.config.js'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
+
+  {
     // Astro components zijn meestal HTML-first; sommige TS-rules zijn er minder relevant.
     files: ['**/*.astro'],
     rules: {
       '@typescript-eslint/no-unused-vars': 'off',
+    },
+  },
+
+  {
+    // Triple-slash refs zijn idiomatisch in Astro env.d.ts.
+    files: ['**/env.d.ts', '**/*.d.ts'],
+    rules: {
+      '@typescript-eslint/triple-slash-reference': 'off',
     },
   },
 

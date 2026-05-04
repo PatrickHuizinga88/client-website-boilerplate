@@ -18,7 +18,11 @@ type Props = {
 
 const { title, description, seo, noIndex } = Astro.props;
 
-const settings = await sanityClient.fetch<SiteSettings | null>(siteSettingsQuery);
+// Tolerant: site mag renderen ook al is Sanity tijdelijk onbereikbaar of misconfigured.
+const settings = await sanityClient.fetch<SiteSettings | null>(siteSettingsQuery).catch((err) => {
+  console.error('siteSettings fetch failed:', err);
+  return null;
+});
 
 const metaTitle = seo?.title || title || settings?.defaultSeo?.title || settings?.title || 'Site';
 const metaDescription =
@@ -63,9 +67,11 @@ const enableUmami = !!umamiScriptUrl && !!umamiWebsiteId && !isPreview(Astro.coo
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    {enableUmami && (
-      <script is:inline defer src={umamiScriptUrl} data-website-id={umamiWebsiteId}></script>
-    )}
+    {
+      enableUmami && (
+        <script is:inline defer src={umamiScriptUrl} data-website-id={umamiWebsiteId} />
+      )
+    }
   </head>
   <body class="flex min-h-screen flex-col">
     <a href="#main" class="skip-link">Naar de inhoud</a>
